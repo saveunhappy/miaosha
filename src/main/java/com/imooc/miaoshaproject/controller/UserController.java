@@ -1,6 +1,8 @@
 package com.imooc.miaoshaproject.controller;
 
 import com.imooc.miaoshaproject.controller.viewobject.UserVO;
+import com.imooc.miaoshaproject.error.BusinessException;
+import com.imooc.miaoshaproject.error.EmBusinessError;
 import com.imooc.miaoshaproject.response.CommonReturnType;
 import com.imooc.miaoshaproject.service.UserService;
 import com.imooc.miaoshaproject.service.model.UserModel;
@@ -18,8 +20,11 @@ public class UserController {
     private UserService userService;
 
     @RequestMapping("/get")
-    public CommonReturnType getUser(@RequestParam("id")Integer id){
+    public CommonReturnType getUser(@RequestParam("id")Integer id) throws BusinessException {
         UserModel userModel = userService.getUserById(id);
+        if(userModel == null){
+            throw new BusinessException(EmBusinessError.USER_NOT_EXIST);
+        }
         UserVO userVO = convertFromModel(userModel);
         return CommonReturnType.create(userVO);
     }
